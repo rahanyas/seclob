@@ -1,5 +1,5 @@
 import  { useState } from "react";
-
+import axiosInstance from "../utils/axiosInstance";
 
 const AuthForm = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
@@ -10,8 +10,15 @@ const AuthForm = () => {
     password : ''
   })
 
-  const handleSingIn = () => {
-     
+  const handleSingIn = async (e) => {
+    e.preventDefault();
+    const {userName, email, password} = user
+     const res = await axiosInstance.post('/auth/signin', {
+     userName ,
+     email ,
+     password 
+     });
+     console.log(res) 
   };
 
   const handleLogin = () => {
@@ -25,16 +32,24 @@ const AuthForm = () => {
         id="container"
       >
         <div className="form-container sign-up-container">
-          <form onSubmit={handleSingIn()}>
+          <form onSubmit={ handleSingIn}>
             <h1 className="text-or">Create Account</h1>
-            <input type="text" placeholder="Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
+            <input 
+            type="text" 
+            placeholder="Name" 
+            onChange={(e) => setUser((prev) => ({...prev, userName : e.target.value}))}
+            />
+            <input type="email" placeholder="Email" 
+            onChange={(e) => setUser(prev => ({...prev, email : e.target.value}))}
+            />
+            <input type="password" placeholder="Password" 
+            onChange={(e) => setUser(prev => ({...prev, password : e.target.value}))}
+            />
             <button type="submit">Sign Up</button>
           </form>
         </div>
         <div className="form-container sign-in-container">
-          <form onSubmit={handleLogin()}>
+          <form onSubmit={handleLogin}>
             <h1>Sign in</h1>
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />

@@ -11,11 +11,13 @@ const port = process.env.PORT || 9000;
 
 connectDb()
 
-app.use(express.json())
-app.use('/', AuthRoutes);
 app.use(cors({
-  origin : ['http://localhost:9000'],
-}))
+  origin : [process.env.PROD_FRONTEND_URL, process.env.DEV_FRONTEND_URL],
+  credentials : true
+}));
+
+app.use(express.json())
+app.use('/api/auth', AuthRoutes);
 
 
 
