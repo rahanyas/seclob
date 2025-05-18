@@ -1,24 +1,36 @@
 import  { useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-
+import {useNavigate} from 'react-router-dom'
 const AuthForm = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  let navigate = useNavigate();
 
   const [user, setUser] = useState({
     userName : '',
     email : '',
     password : ''
-  })
+  });
+
+  const [Msg, setMsg] = useState('');
 
   const handleSingIn = async (e) => {
     e.preventDefault();
     const {userName, email, password} = user
-     const res = await axiosInstance.post('/auth/signin', {
-     userName ,
-     email ,
-     password 
-     });
-     console.log(res) 
+    try {
+      const res = await axiosInstance.post('/auth/signin', {
+      userName ,
+      email ,
+      password 
+      });
+      console.log(res)
+      setMsg(res?.data?.msg);
+      setTimeout(() => setMsg(''), 3000);
+      navigate('/home')
+    } catch (err) {
+      console.log('error in handleSignIn', err);
+      setMsg(err?.response?.data?.msg)
+      setTimeout(() => setMsg(''), 3000);
+    }
   };
 
   const handleLogin = () => {
@@ -32,6 +44,18 @@ const AuthForm = () => {
         id="container"
       >
         <div className="form-container sign-up-container">
+          {Msg && (
+  <div
+    className={`text-sm font-medium rounded-md px-4 py-2 mb-4 text-center ${
+      Msg.toLowerCase().includes("success")
+        ? "bg-green-100 text-green-700 border border-green-300"
+        : "bg-red-100 text-red-700 border border-red-300"
+    }`}
+  >
+    {Msg}
+  </div>
+)}
+
           <form onSubmit={ handleSingIn}>
             <h1 className="text-or">Create Account</h1>
             <input 
@@ -49,6 +73,18 @@ const AuthForm = () => {
           </form>
         </div>
         <div className="form-container sign-in-container">
+          {Msg && (
+  <div
+    className={`text-sm font-medium rounded-md px-4 py-2 mb-4 text-center ${
+      Msg.toLowerCase().includes("success")
+        ? "bg-green-100 text-green-700 border border-green-300"
+        : "bg-red-100 text-red-700 border border-red-300"
+    }`}
+  >
+    {Msg}
+  </div>
+)}
+
           <form onSubmit={handleLogin}>
             <h1>Sign in</h1>
             <input type="email" placeholder="Email" />
